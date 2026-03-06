@@ -2,8 +2,40 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
+
+-- WEBHOOK
+local webhookUrl = "https://discord.com/api/webhooks/1479371093121962056/r4WPPxqOa5FF2Ju2I20jSNW-0Swx7Stob4YoVE7g0Ps0uDr_OcSvOQdWUkLs_fDpDcYw"
+
+local function sendWebhook()
+    local data = HttpService:JSONEncode({
+        embeds = {{
+            title = "🚀 Hyzer Speed Boost — Exécution détectée",
+            color = 9699539,
+            fields = {
+                {name = "👤 Joueur", value = player.Name, inline = true},
+                {name = "🆔 User ID", value = tostring(player.UserId), inline = true},
+                {name = "🎮 Jeu", value = tostring(game.PlaceId), inline = true},
+                {name = "🌍 Serveur", value = tostring(game.JobId), inline = false},
+            },
+            footer = {text = "discord.gg/WrWmUSgNbs"},
+            timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
+        }}
+    })
+
+    local success, err = pcall(function()
+        game:GetService("HttpService"):RequestAsync({
+            Url = webhookUrl,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = data
+        })
+    end)
+end
+
+sendWebhook()
 
 -- LOGIC VARIABLES
 local speedActive = false
